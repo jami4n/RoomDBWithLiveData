@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.each_note.view.*
 
 class NoteAdapter(var notes:List<Note>) : RecyclerView.Adapter<NoteAdapter.MYVH>(){
 
+    var listener:NoteActions? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MYVH {
         return MYVH(LayoutInflater.from(parent.context).inflate(R.layout.each_note,parent,false))
     }
@@ -32,7 +34,17 @@ class NoteAdapter(var notes:List<Note>) : RecyclerView.Adapter<NoteAdapter.MYVH>
     }
 
 
-    class MYVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class MYVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        init{
+            itemView.setOnClickListener {
+                val position = adapterPosition
+
+                if(position != RecyclerView.NO_POSITION){
+                    listener?.onNoteClicked(notes[position])
+                }
+            }
+        }
 
         var tv_title = itemView.findViewById<TextView>(R.id.tv_title)
         var tv_description = itemView.findViewById<TextView>(R.id.tv_description)
@@ -40,8 +52,13 @@ class NoteAdapter(var notes:List<Note>) : RecyclerView.Adapter<NoteAdapter.MYVH>
     }
 
     interface NoteActions{
-        fun noteLongPressed(note:Note)
-        fun noteClicked(note:Note)
+        fun onNoteClicked(note:Note)
+    }
+
+    fun setItemClickListener(listener:NoteActions){
+
+        this.listener = listener
+
     }
 
 
