@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     //hello jamian
 
     var noteViewModel: NoteViewModel? = null
-    var notes: ArrayList<Note> = ArrayList()
+
     lateinit var notesAdapter: NoteAdapter
 
     enum class NOTE_ACTION {
@@ -38,8 +38,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        notes.clear()
-        notesAdapter = NoteAdapter(notes)
+        notesAdapter = NoteAdapter()
         recyc_notes.layoutManager = LinearLayoutManager(this)
         recyc_notes.adapter = notesAdapter
 
@@ -76,11 +75,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel::class.java)
+
         noteViewModel?.getNotes()?.observe(this, Observer<List<Note>> {
-            Log.d("12345", it.toString())
-            notes.clear()
-            notes.addAll(it)
-            notesAdapter.notifyDataSetChanged()
+            notesAdapter.submitList(it)
         })
 
         btn_add.setOnClickListener {

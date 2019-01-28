@@ -6,10 +6,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.each_note.view.*
 
-class NoteAdapter(var notes:List<Note>) : RecyclerView.Adapter<NoteAdapter.MYVH>(){
+class NoteAdapter() :
+    ListAdapter<Note, NoteAdapter.MYVH>(DIFF_CALLBACK) {
+
+    companion object {
+        var DIFF_CALLBACK = object : DiffUtil.ItemCallback<Note>() {
+
+            override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+                return oldItem.id.equals(newItem.id)
+            }
+
+            override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+                return oldItem.title.equals(newItem.title) &&
+                        oldItem.description.equals(newItem.description) &&
+                        oldItem.priority == newItem.priority
+            }
+
+        }
+    }
 
     var listener:NoteActions? = null
 
@@ -17,20 +36,16 @@ class NoteAdapter(var notes:List<Note>) : RecyclerView.Adapter<NoteAdapter.MYVH>
         return MYVH(LayoutInflater.from(parent.context).inflate(R.layout.each_note,parent,false))
     }
 
-    override fun getItemCount(): Int {
-        return notes.size
-    }
-
 
     override fun onBindViewHolder(holder: MYVH, position: Int) {
-        var note = notes[position]
+        var note = getItem(position)
         holder.tv_title.text = note.title
         holder.tv_description.text = note.description
 
     }
 
     fun getNoteAt(position:Int):Note{
-        return notes[position]
+        return getItem(position)
     }
 
 
@@ -41,7 +56,7 @@ class NoteAdapter(var notes:List<Note>) : RecyclerView.Adapter<NoteAdapter.MYVH>
                 val position = adapterPosition
 
                 if(position != RecyclerView.NO_POSITION){
-                    listener?.onNoteClicked(notes[position])
+                    listener?.onNoteClicked(getItem(position))
                 }
             }
         }
