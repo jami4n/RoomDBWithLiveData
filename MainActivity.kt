@@ -2,6 +2,7 @@ package `in`.jamian.roomdbwithlivedata
 
 import `in`.jamian.roomdbwithlivedata.adapter.NoteAdapter
 import `in`.jamian.roomdbwithlivedata.model.Note
+import `in`.jamian.roomdbwithlivedata.model.NoteRepository
 import `in`.jamian.roomdbwithlivedata.viewmodel.NoteViewModel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -37,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        lifecycle.addObserver(NoteRepository(application))
 
         notesAdapter = NoteAdapter()
         recyc_notes.layoutManager = LinearLayoutManager(this)
